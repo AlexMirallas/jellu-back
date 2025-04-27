@@ -8,6 +8,7 @@ import { SubredditsModule } from './subreddits/subreddits.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
+import { RolesModule } from './roles/roles.modules';
 
 
 @Module({
@@ -34,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
     PostsModule,
     CommentsModule,
     AuthModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

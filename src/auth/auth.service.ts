@@ -31,7 +31,7 @@ export class AuthService {
         if (isMatch) {
             // Remove the passwordHash property before returning the user object
             // This ensures the returned object is still an instance of User and has its methods
-            const { passwordHash, ...result } = user;
+           
             return user;
         }
     }

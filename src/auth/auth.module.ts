@@ -34,7 +34,6 @@ import { User } from '../users/entities/user.entity';
     AuthService,
     LocalStrategy, // Will be created soon
     JwtStrategy,   // Will be created soon
-    UsersService // Only if UsersService is not exported from UsersModule
   ],
   controllers: [AuthController], // We will create this controller
   exports: [AuthService], // Export AuthService if other modules need login functionality

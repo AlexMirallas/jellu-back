@@ -1,10 +1,12 @@
-import { Controller, Request, Post, UseGuards, Body, HttpCode, HttpStatus, Get } from '@nestjs/common';
+import { Controller, Request, Post, UseGuards, Res, Body, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard'; 
 import { JwtAuthGuard } from './guards/jwt-auth.guard';  
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { Public } from './decorators/public.decorator'; 
+import { Public } from './decorators/public.decorator';
+import { Response } from 'express'; // Import Response from express
+import { UsersService } from '../users/users.service'; // Import UsersService if needed for registration 
 
 @Controller('auth') 
 export class AuthController {
@@ -15,14 +17,24 @@ export class AuthController {
    * POST /auth/login
    * Expects { username: '...', password: '...' } in the request body.
    */
-  @Public() // Mark this route as public (doesn't require JWT)
-  @UseGuards(LocalAuthGuard) // Apply the LocalAuthGuard (which uses LocalStrategy)
+  @Public()
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  @HttpCode(HttpStatus.OK) // Set response code to 200 OK on success
-  async login(@Request() req) {
-    // If LocalAuthGuard succeeds, req.user contains the user object returned by LocalStrategy.validate()
-    console.log('Login request user:', req.user); // Add logging
-    return this.authService.login(req.user); // Generate and return the JWT
+  @HttpCode(HttpStatus.OK)
+  async login(@Request() req, @Res({ passthrough: true }) response: Response) { // Inject Response
+    const { access_token } = await this.authService.login(req.user);
+
+    response.cookie('access_token', access_token, { // Use a suitable cookie name
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Only set Secure in production (requires HTTPS)
+      sameSite: 'lax', // Or 'strict'
+      maxAge: parseInt(process.env.JWT_EXPIRATION_TIME || '3600000', 10), // Convert to number, default to 1 hour
+      path: '/',
+    });
+
+    // You might return the user object or just a success message now
+    // The token itself is in the cookie, not the body
+    return { message: 'Login successful', user: req.user };
   }
 
   /**
@@ -62,14 +74,17 @@ export class AuthController {
    * Example of a logout route (optional, depends on requirements).
    * POST /auth/logout
    */
-  @UseGuards(JwtAuthGuard) // Requires user to be logged in to log out
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  async logout(@Request() req) {
-      console.log('Logout request user:', req.user); // Add logging
-      // For stateless JWT, server-side logout often just means the client discards the token.
-      // You might implement token blocklisting here if needed.
-      return { message: 'Logout successful' };
-      // return this.authService.logout(req.user); // If you have specific server-side logout logic
-  }
+   @UseGuards(JwtAuthGuard) // Still need JWT guard for logout logic
+   @Post('logout')
+   @HttpCode(HttpStatus.OK)
+   async logout(@Res({ passthrough: true }) response: Response) {
+       response.cookie('access_token', '', { // Clear the cookie
+           httpOnly: true,
+           secure: process.env.NODE_ENV === 'production',
+           sameSite: 'lax',
+           expires: new Date(0), 
+           path: '/',
+       });
+       return { message: 'Logout successful' };
+   }
 }
