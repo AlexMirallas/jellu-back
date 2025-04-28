@@ -1,4 +1,3 @@
-// filepath: c:\Users\Alexa\Web_Dev\jellu\jellu-backend\src\auth\auth.module.ts
 import { Module } from '@nestjs/common';
 import { UsersModule } from '../users/users.module'; // Import UsersModule
 import { PassportModule } from '@nestjs/passport';

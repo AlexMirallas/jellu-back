@@ -3,13 +3,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException, Request } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
-import { User } from '../../users/entities/user.entity'; // Import User entity
+import { User } from '../../users/entities/user.entity'; 
 import { Request as ExpressRequest } from 'express'; 
 
 const cookieExtractor = (req: ExpressRequest): string | null => {
   let token = null;
   if (req && req.cookies) {
-    token = req.cookies['access_token']; // Use the same cookie name as set in AuthController
+    token = req.cookies['access_token'];
+    console.log('Extracted JWT from cookie: ', token); // Log the extracted token for debugging 
   }
   return token;
 }

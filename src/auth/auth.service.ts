@@ -19,12 +19,12 @@ export class AuthService {
 
   /**
    * Validates a user based on username and password.
-   * @param username The username to validate.
+   * @param identifier The username or email to validate.
    * @param pass The plaintext password to compare.
    * @returns The user object (without password) if validation is successful, otherwise null.
    */
-  async validateUser(username: string, pass: string): Promise<Omit<User, 'passwordHash'> | null> {
-    const user = await this.usersService.findOneByUsername(username); // Assumes findOneByUsername exists in UsersService
+  async validateUser(identifier: string, pass: string): Promise<Omit<User, 'passwordHash'> | null> {
+    const user = await this.usersService.findOneByEmailOrUsername(identifier); // Assumes findOneByUsername exists in UsersService
 
     if (user && user.passwordHash) {
         const isMatch = await bcrypt.compare(pass, user.passwordHash);
@@ -44,7 +44,7 @@ export class AuthService {
    * @returns An object containing the access token.
    */
   async login(user: Omit<User, 'passwordHash'>) {
-    const payload = { username: user.username, sub: user.id,    roles: user.roles  }; // Add roles or other relevant info
+    const payload = { username: user.username, sub: user.id, roles: user.roles  }; // Add roles or other relevant info
     return {
       access_token: this.jwtService.sign(payload),
     };

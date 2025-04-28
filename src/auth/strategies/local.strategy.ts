@@ -16,19 +16,19 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') { // 'loc
   /**
    * Passport automatically calls this method when using the AuthGuard('local').
    * It receives the credentials (username, password) extracted from the request body.
-   * @param username The username extracted from the request.
+   * @param identifier The username extracted from the request.
    * @param password The password extracted from the request.
    * @returns The validated user object (without password).
    * @throws UnauthorizedException if validation fails.
    */
-  async validate(username: string, pass: string): Promise<Omit<User, 'passwordHash'>> {
-    console.log(`LocalStrategy validating user: ${username}`); // Add logging
-    const user = await this.authService.validateUser(username, pass);
+  async validate(identifier: string, pass: string): Promise<Omit<User, 'passwordHash'>> {
+    console.log(`LocalStrategy validating user: ${identifier}`); // Add logging
+    const user = await this.authService.validateUser(identifier, pass);
     if (!user) {
-      console.log(`LocalStrategy validation failed for user: ${username}`); // Add logging
+      console.log(`LocalStrategy validation failed for user: ${identifier}`); // Add logging
       throw new UnauthorizedException('Invalid credentials');
     }
-    console.log(`LocalStrategy validation successful for user: ${username}`); // Add logging
+    console.log(`LocalStrategy validation successful for user: ${identifier}`); // Add logging
     return user; // Passport attaches this user object to request.user
   }
 }

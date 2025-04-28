@@ -26,8 +26,13 @@ export class UsersService {
         return this.usersRepository.findOne({ where: { email }, relations:{roles:true} });
     }
 
-    async findOneByEmailOrUsername(email: string, username: string): Promise<User | null> {
-        return this.usersRepository.findOne({ where: [{ email }, { username }], relations: {roles:true} }  );
+    
+    /** 
+        @param identifier
+        @returns User | null
+    */
+    async findOneByEmailOrUsername(identifier : string): Promise<User | null> {
+        return this.usersRepository.findOne({ where: [{ email: identifier }, { username: identifier }], relations: {roles:{permissions: true} }  });
     }
 
 

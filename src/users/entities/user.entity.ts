@@ -3,6 +3,7 @@ import { Subreddit } from '../../subreddits/entities/subreddit.entity'; // Adjus
 import { Post } from '../../posts/entities/post.entity';         // Adjust path
 import { Comment } from '../../comments/entities/comment.entity'; // Adjust path
 import { Role } from 'src/roles/entities/role.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -15,7 +16,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  
   @Column()
+  @Exclude()
   passwordHash: string; 
 
   @ManyToMany(() => Role, role => role.users, { eager: true })

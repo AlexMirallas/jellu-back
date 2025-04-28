@@ -28,7 +28,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Only set Secure in production (requires HTTPS)
       sameSite: 'lax', // Or 'strict'
-      maxAge: parseInt(process.env.JWT_EXPIRATION_TIME || '3600000', 10), // Convert to number, default to 1 hour
+      maxAge: 3600000, 
       path: '/',
     });
 
@@ -67,6 +67,7 @@ export class AuthController {
   getProfile(@Request() req) {
     // If JwtAuthGuard succeeds, req.user contains the payload returned by JwtStrategy.validate()
     console.log('Profile request user:', req.user); // Add logging
+    // // This is the user object returned by JwtStrategy.validate()
     return req.user; // Return the user info from the JWT payload
   }
 
