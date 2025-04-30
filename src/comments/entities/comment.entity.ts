@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, Tree, TreeChildren, TreeParent } from 'typeorm';
-import { User } from '../../users/entities/user.entity'; // Adjust path
-import { Post } from '../../posts/entities/post.entity'; // Adjust path
+import { Entity, OneToMany, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { User } from '../../users/entities/user.entity'; 
+import { Post } from '../../posts/entities/post.entity'; 
+import { Vote } from '../../votes/entities/vote.entity'; 
 
 @Entity('comments')
-@Tree('materialized-path') // Or 'closure-table', 'nested-set' for comment threading
+@Tree('materialized-path') 
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,10 +30,13 @@ export class Comment {
   @TreeChildren()
   replies: Comment[];
 
-  @TreeParent({ onDelete: 'CASCADE' }) // Delete replies if parent comment is deleted
+  @TreeParent({ onDelete: 'CASCADE' }) 
   parentComment: Comment;
 
-  // Add vote counts later
-  // @Column({ default: 0 })
-  // score: number;
+  @OneToMany(() => Vote, vote => vote.comment)
+  votes: Vote[];
+
+  @Column({ default: 0 })
+  score: number;
+  
 }

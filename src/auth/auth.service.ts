@@ -25,17 +25,14 @@ export class AuthService {
    */
   async validateUser(identifier: string, pass: string): Promise<Omit<User, 'passwordHash'> | null> {
     const user = await this.usersService.findOneByEmailOrUsername(identifier); // Assumes findOneByUsername exists in UsersService
-
     if (user && user.passwordHash) {
         const isMatch = await bcrypt.compare(pass, user.passwordHash);
         if (isMatch) {
-            // Remove the passwordHash property before returning the user object
-            // This ensures the returned object is still an instance of User and has its methods
-           
+            console.log('Password match successful for user:', user.username); // Debugging line
             return user;
         }
     }
-    return null; // Return null if user not found or password doesn't match
+    return null; 
   }
 
   /**
@@ -44,7 +41,8 @@ export class AuthService {
    * @returns An object containing the access token.
    */
   async login(user: Omit<User, 'passwordHash'>) {
-    const payload = { username: user.username, sub: user.id, roles: user.roles  }; // Add roles or other relevant info
+    const payload = { username: user.username, sub: user.id, roles: user.roles  };
+    console.log('Generating JWT for user:', payload); // Debugging line
     return {
       access_token: this.jwtService.sign(payload),
     };

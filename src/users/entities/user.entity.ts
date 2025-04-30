@@ -1,9 +1,10 @@
 import { Entity,JoinTable, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
-import { Subreddit } from '../../subreddits/entities/subreddit.entity'; // Adjust path
-import { Post } from '../../posts/entities/post.entity';         // Adjust path
-import { Comment } from '../../comments/entities/comment.entity'; // Adjust path
+import { Subreddit } from '../../subreddits/entities/subreddit.entity';
+import { Post } from '../../posts/entities/post.entity';         
+import { Comment } from '../../comments/entities/comment.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { Exclude } from 'class-transformer';
+import { Vote } from '../../votes/entities/vote.entity'; 
 
 @Entity('users')
 export class User {
@@ -54,6 +55,9 @@ export class User {
 
   @OneToMany(() => Comment, comment => comment.author)
   comments: Comment[];
+
+  @OneToMany(() => Vote, vote => vote.user)
+  votes: Vote[];
 
   hasPermission(permissionName: string): boolean {
     if (!this.roles) return false;

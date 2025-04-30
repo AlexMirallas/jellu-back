@@ -32,7 +32,10 @@ export class UsersService {
         @returns User | null
     */
     async findOneByEmailOrUsername(identifier : string): Promise<User | null> {
-        return this.usersRepository.findOne({ where: [{ email: identifier }, { username: identifier }], relations: {roles:{permissions: true} }  });
+        console.log('Finding user by identifier:', identifier); // Debugging line
+        console.log('Identifier type:', typeof identifier); // Debugging line
+        const user =  this.usersRepository.findOne({ where: [{ email: identifier }, { username: identifier }], relations: {roles:{permissions: true} }  });
+        return user;
     }
 
 

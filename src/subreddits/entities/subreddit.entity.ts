@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity'; // Adjust path if needed
 import { Post } from '../../posts/entities/post.entity'; // Adjust path if needed
+import { Category } from '../entities/category.entity'; // Adjust path if needed
 
 @Entity('subreddits')
 export class Subreddit {
@@ -13,11 +14,20 @@ export class Subreddit {
   @Column('text', { nullable: true })
   description: string;
 
+  @Column({type: 'varchar', length: 255, nullable: true})
+  bannerImage: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  iconImage: string;
+
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  
 
   // --- Relationships ---
 
@@ -46,4 +56,8 @@ export class Subreddit {
   // Posts belonging to this subreddit
   @OneToMany(() => Post, post => post.subreddit)
   posts: Post[];
+
+  // Categories for this subreddit (if applicable)
+  @ManyToMany(() => Category, category => category.subreddits)
+  categories: Category[];
 }

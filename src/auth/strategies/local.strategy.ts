@@ -8,7 +8,7 @@ import { User } from '../../users/entities/user.entity';
 export class LocalStrategy extends PassportStrategy(Strategy, 'local') { // 'local' is the default name
   constructor(private authService: AuthService) {
     super({
-      usernameField: 'username', // Specify the field name for username in the request body (default is 'username')
+      usernameField: 'identifier', // Specify the field name for username in the request body (default is 'username')
       // passwordField: 'password' // Specify the field name for password (default is 'password')
     });
   }
@@ -22,13 +22,11 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') { // 'loc
    * @throws UnauthorizedException if validation fails.
    */
   async validate(identifier: string, pass: string): Promise<Omit<User, 'passwordHash'>> {
-    console.log(`LocalStrategy validating user: ${identifier}`); // Add logging
+  
     const user = await this.authService.validateUser(identifier, pass);
     if (!user) {
-      console.log(`LocalStrategy validation failed for user: ${identifier}`); // Add logging
       throw new UnauthorizedException('Invalid credentials');
     }
-    console.log(`LocalStrategy validation successful for user: ${identifier}`); // Add logging
-    return user; // Passport attaches this user object to request.user
+    return user; 
   }
 }

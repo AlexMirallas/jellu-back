@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-import { User } from '../../users/entities/user.entity';         // Adjust path
-import { Subreddit } from '../../subreddits/entities/subreddit.entity'; // Adjust path
-import { Comment } from '../../comments/entities/comment.entity'; // Adjust path
+import { User } from '../../users/entities/user.entity';         
+import { Subreddit } from '../../subreddits/entities/subreddit.entity';
+import { Comment } from '../../comments/entities/comment.entity';
+import { Vote } from '../../votes/entities/vote.entity';
 
 @Entity('posts')
 export class Post {
@@ -33,7 +34,11 @@ export class Post {
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];
 
-  // Add vote counts later if needed
-  // @Column({ default: 0 })
-  // score: number;
+  commentCount: number;
+
+  @OneToMany(() => Vote, vote => vote.post)
+  votes: Vote[];
+
+  @Column({ default: 0 })
+  score: number;
 }
