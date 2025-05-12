@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService, ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { SubredditsModule } from './subreddits/subreddits.module';
+import { SubjelluModule } from './subjellus/subjellus.module';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
@@ -24,6 +24,7 @@ import { RolesModule } from './roles/roles.modules';
         port: configService.get('DB_PORT'),
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
+        schema: configService.get('DB_SCHEMA'),
         database: configService.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
@@ -31,7 +32,7 @@ import { RolesModule } from './roles/roles.modules';
       inject: [ConfigService],
     }),
     UsersModule,
-    SubredditsModule,
+    SubjelluModule,
     PostsModule,
     CommentsModule,
     AuthModule,

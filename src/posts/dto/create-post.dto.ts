@@ -13,6 +13,6 @@ export class CreatePostDto {
    
 
     @IsUUID()
-    subredditId: string; // ID of the subreddit to post to
+    subjelluId: string; // ID of the subreddit to post to
 
 }

@@ -1,6 +1,6 @@
 import { Injectable,BadRequestException,NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository,} from '@nestjs/typeorm';
+import { Repository, TreeRepository, IsNull } from 'typeorm';
 import { Comment } from './entities/comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PostsService } from '../posts/posts.service'; 
@@ -10,7 +10,7 @@ import { User } from 'src/users/entities/user.entity';
 export class CommentsService {
     constructor(
         @InjectRepository(Comment)
-        private commentsRepository: Repository<Comment>,
+        private commentsRepository: TreeRepository<Comment>,
         private postsService: PostsService, 
     ) {}
 
@@ -43,16 +43,33 @@ export class CommentsService {
         return this.commentsRepository.save(comment);
     }
 
-    async findAllByPost(postId: string): Promise<Comment[]> {
+    async findAllByPostId(postId: string): Promise<Comment[]> {
+        // Verify the post exists first (optional, but good practice)
+        const post = await this.postsService.findOne(postId);
+        if (!post) {
+            throw new NotFoundException(`Post with ID "${postId}" not found, cannot fetch comments.`);
+        }
 
-        await this.postsService.findOne(postId);
-
-        return this.commentsRepository.find({
-            where: { post: { id: postId } },
-            relations: ['author', 'parent', 'children'], // Load relations as needed
-            order: { createdAt: 'ASC' }, // Or DESC
+        // Find root comments for the post
+        const roots = await this.commentsRepository.find({
+            where: { 
+                post: { id: postId }, // Filter by postId
+                parentComment: IsNull()   // Ensure they are root comments (no parent)
+            }, 
+            relations: ['author', 'votes'], // Load author and votes for root comments
         });
+
+        // For each root, find its descendants (replies)
+        // TypeORM's TreeRepository can simplify loading the entire tree.
+        // If you want to load the full tree for each root:
+        const commentTree: Comment[] = [];
+        for (const root of roots) {
+            const tree = await this.commentsRepository.findDescendantsTree(root, {
+                relations: ['author', 'votes'], // Ensure relations are loaded for descendants too
+            });
+            commentTree.push(tree);
+        }
+        return commentTree;
+
     }
-
-
 }

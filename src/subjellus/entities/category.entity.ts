@@ -1,5 +1,5 @@
 import { Column, JoinTable, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany } from "typeorm";
-import { Subreddit } from "../../subreddits/entities/subreddit.entity"; // Adjust the import path as necessary
+import { Subjellu } from "./subjellu.entity"; // Adjust the import path as necessary
 
 @Entity({ name: "categories" })
 export class Category {
@@ -31,12 +31,12 @@ export class Category {
     @OneToMany(() => Category, category => category.parent)
     children: Category[];
 
-    @ManyToMany(() => Subreddit, subreddit => subreddit.categories) // Point to 'categories' property on Subreddit
+    @ManyToMany(() => Subjellu, subjellu => subjellu.categories)
     @JoinTable({
-        name: 'subreddit_categories',
+        name: 'subjellu_categories',
         joinColumn: { name: 'categoryId', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'subredditId', referencedColumnName: 'id' }
+        inverseJoinColumn: { name: 'subjelluId', referencedColumnName: 'id' }
     })
-    subreddits: Subreddit[]
+    subjellus: Subjellu[]
 
 }

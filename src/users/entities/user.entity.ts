@@ -1,5 +1,5 @@
 import { Entity,JoinTable, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
-import { Subreddit } from '../../subreddits/entities/subreddit.entity';
+import { Subjellu } from '../../subjellus/entities/subjellu.entity';
 import { Post } from '../../posts/entities/post.entity';         
 import { Comment } from '../../comments/entities/comment.entity';
 import { Role } from 'src/roles/entities/role.entity';
@@ -38,17 +38,17 @@ export class User {
 
   // --- Relationships ---
 
-  // Subreddits created by this user (implicitly the first moderator)
-  @OneToMany(() => Subreddit, subreddit => subreddit.creator)
-  createdSubreddits: Subreddit[];
+  // Subs created by this user (implicitly the first moderator)
+  @OneToMany(() => Subjellu, subjellu => subjellu.creator)
+  createdSubjellus: Subjellu[];
 
-  // Subreddits this user moderates (Many-to-Many)
-  @ManyToMany(() => Subreddit, subreddit => subreddit.moderators)
-  moderatedSubreddits: Subreddit[]; // Joined via Subreddit entity
+  // Subs this user moderates (Many-to-Many)
+  @ManyToMany(() => Subjellu, subjellu => subjellu.moderators)
+  moderatedSubjellus: Subjellu[]; 
 
-  // Subreddits this user is subscribed to (Many-to-Many)
-  @ManyToMany(() => Subreddit, subreddit => subreddit.subscribers)
-  subscribedSubreddits: Subreddit[]; // Joined via Subreddit entity
+  // Subs this user is subscribed to (Many-to-Many)
+  @ManyToMany(() => Subjellu, subjellu => subjellu.subscribers)
+  subscribedSubjellus: Subjellu[]; 
 
   @OneToMany(() => Post, post => post.author)
   posts: Post[];

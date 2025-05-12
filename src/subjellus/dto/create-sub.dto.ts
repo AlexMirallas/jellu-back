@@ -1,10 +1,10 @@
 import { IsString, MinLength, MaxLength, IsOptional, IsNotEmpty } from 'class-validator';
-import { Category } from '../entities/category.entity';
 
-export class CreateSubredditDto {
+
+export class CreateSubjelluDto {
     @IsString()
     @MinLength(3)
-    @MaxLength(21) // Reddit's limit
+    @MaxLength(21) 
     name: string;
 
     @IsString()

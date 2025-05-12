@@ -22,9 +22,9 @@ export class CommentsController {
     }
 
     @Public() 
-    @Get('/post/:postId') 
+    @Get('/:postId') 
     findAllByPost(@Param('postId', ParseUUIDPipe) postId: string) {
-        return this.commentsService.findAllByPost(postId);
+        return this.commentsService.findAllByPostId(postId);
     }
 
     @Post(':id/vote')

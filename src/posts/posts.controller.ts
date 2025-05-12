@@ -31,15 +31,15 @@ export class PostsController {
     }
 
     @Public()
-    @Get('/subreddit/:subredditId')
-    findAllBySubreddit(
-        @Param('subredditId', ParseUUIDPipe) subredditId: string,
+    @Get('/subjellu/:subjelluId')
+    findAllBySubjellu(
+        @Param('subjelluId', ParseUUIDPipe) subjelluId: string,
         @Query('limit') limit?: string,
         @Query('offset') offset?: string
     ) {
         const take = limit ? parseInt(limit, 10) : 20;
         const skip = offset ? parseInt(offset, 10) : 0;
-        return this.postsService.findAllBySubreddit(subredditId, take, skip);
+        return this.postsService.findAllBySubjellu(subjelluId, take, skip);
     }
 
 
@@ -47,6 +47,12 @@ export class PostsController {
     @Get(':id')
     findOne(@Param('id', ParseUUIDPipe) id: string) {
         return this.postsService.findOne(id);
+    }
+
+    @Public() 
+    @Get(':id/with-comments') 
+    findOneWithComments(@Param('id', ParseUUIDPipe) id: string) {
+        return this.postsService.findOneWithComments(id);
     }
 
     @UseGuards(JwtAuthGuard)

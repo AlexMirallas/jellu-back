@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';         
-import { Subreddit } from '../../subreddits/entities/subreddit.entity';
+import { Subjellu } from '../../subjellus/entities/subjellu.entity';
 import { Comment } from '../../comments/entities/comment.entity';
 import { Vote } from '../../votes/entities/vote.entity';
 
@@ -28,8 +28,8 @@ export class Post {
   @ManyToOne(() => User, user => user.posts, { nullable: false, eager: true }) // Often useful to load author with post
   author: User;
 
-  @ManyToOne(() => Subreddit, subreddit => subreddit.posts, { nullable: false })
-  subreddit: Subreddit;
+  @ManyToOne(() => Subjellu, subjellu => subjellu.posts, { nullable: false })
+  subjellu: Subjellu;
 
   @OneToMany(() => Comment, comment => comment.post)
   comments: Comment[];

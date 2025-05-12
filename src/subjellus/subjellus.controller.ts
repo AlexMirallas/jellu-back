@@ -1,52 +1,52 @@
 import { Controller, Get, Query,ParseUUIDPipe } from '@nestjs/common';
-import { SubredditsService } from './subreddits.service';
+import { SubjelluService } from './subjellus.service';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { Subreddit } from './entities/subreddit.entity';
-import { CreateSubredditDto } from './dto/create-sub.dto';
+import { Subjellu } from './entities/subjellu.entity';
+import { CreateSubjelluDto } from './dto/create-sub.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Body, Post, UseGuards, Request,Param,Patch,Delete } from '@nestjs/common/decorators';
-import { UpdateSubredditDto } from './dto/update-sub.dto';
+import { UpdateSubjelluDto } from './dto/update-sub.dto';
 
 
-@Controller('subreddits')
-export class SubredditsController {
-    constructor(private readonly subredditService: SubredditsService) {}
+@Controller('subjellus')
+export class SubjelluController {
+    constructor(private readonly subjelluService: SubjelluService) {}
 
     @UseGuards(JwtAuthGuard) // Require login to create
     @Post()
-    create(@Body() createSubredditDto: CreateSubredditDto, @Request() req) {
+    create(@Body() createSubjelluDto: CreateSubjelluDto, @Request() req) {
         // req.user should be populated by JwtAuthGuard/Strategy
-        return this.subredditService.create(createSubredditDto, req.user);
+        return this.subjelluService.create(createSubjelluDto, req.user);
     }
 
     @Public()
     @Get()
-    async findAll(@Query('limit') limit?:string, @Query('offset')offset?: string): Promise<Subreddit[] | null> {
+    async findAll(@Query('limit') limit?:string, @Query('offset')offset?: string): Promise<Subjellu[] | null> {
         const take = limit ? parseInt(limit, 10) : 10;
         const skip = offset ? parseInt(offset, 10) : 0;
-        return this.subredditService.findAll(); 
+        return this.subjelluService.findAll(); 
     }
 
     @Public() // Allow public access
     @Get(':idOrName') // Can accept ID or name
     findOne(@Param('idOrName') idOrName: string) {
-        return this.subredditService.findOne(idOrName);
+        return this.subjelluService.findOne(idOrName);
     }
 
     @UseGuards(JwtAuthGuard) // Require login to update
     @Patch(':id')
     update(
         @Param('id', ParseUUIDPipe) id: string, // Validate ID is UUID if finding by ID only
-        @Body() updateSubredditDto: UpdateSubredditDto,
+        @Body() updateSubjelluDto: UpdateSubjelluDto,
         @Request() req
     ) {
-        return this.subredditService.update(id, updateSubredditDto, req.user.id);
+        return this.subjelluService.update(id, updateSubjelluDto, req.user.id);
     }
 
     @UseGuards(JwtAuthGuard) // Require login to delete
     @Delete(':id')
     remove(@Param('id', ParseUUIDPipe) id: string, @Request() req) {
-        return this.subredditService.remove(id, req.user.id);
+        return this.subjelluService.remove(id, req.user.id);
     }
 
 

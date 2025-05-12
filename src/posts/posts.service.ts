@@ -5,37 +5,36 @@ import { Post } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from '../users/entities/user.entity';
-import { SubredditsService } from '../subreddits/subreddits.service'; // Inject to validate subreddit
+import { SubjelluService } from '../subjellus/subjellus.service'; 
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Post)
         private postsRepository: Repository<Post>,
-        private subredditsService: SubredditsService, // Inject Subreddit service
+        private subjelluService: SubjelluService, 
     ) {}
 
     async create(createPostDto: CreatePostDto, author: User): Promise<Post> {
-        // Validate subreddit exists
-        const subreddit = await this.subredditsService.findOne(createPostDto.subredditId);
-        // Add checks if user is allowed to post in this subreddit (e.g., joined, not banned)
+        // Validate subjellu exists
+        const subjellu = await this.subjelluService.findOne(createPostDto.subjelluId);
+        // Add checks if user is allowed to post in this subjellu (e.g., joined, not banned)
 
         const post = this.postsRepository.create({
             ...createPostDto,
             author: author,
-            subreddit: subreddit, // Assign the subreddit entity
+            subjellu: subjellu, 
         });
         return this.postsRepository.save(post);
     }
 
-    async findAllBySubreddit(subredditId: string, limit: number = 20, offset: number = 0): Promise<Post[]> {
-        // Validate subreddit exists first if needed
-        // await this.subredditsService.findOne(subredditId);
+    async findAllBySubjellu(subjelluId: string, limit: number = 1000, offset: number = 0): Promise<Post[]> {
+       
 
         return this.postsRepository.find({
-            where: { subreddit: { id: subredditId } },
-            relations: ['author', 'subreddit'], // Load author and subreddit info
-            order: { createdAt: 'DESC' }, // Default sort by new
+            where: { subjellu: { id: subjelluId } },
+            relations: ['author', 'subjellu'], 
+            order: { createdAt: 'DESC' }, 
             take: limit,
             skip: offset,
         });
@@ -44,7 +43,7 @@ export class PostsService {
     async findOne(id: string): Promise<Post> {
         const post = await this.postsRepository.findOne({
             where: { id },
-            relations: ['author', 'subreddit', 'comments'], // Load relations
+            relations: ['author', 'subjellu', 'comments'], // Load relations
         });
         if (!post) {
             throw new NotFoundException(`Post with ID "${id}" not found`);
@@ -67,9 +66,9 @@ export class PostsService {
     async remove(id: string, userId: string): Promise<void> {
         const post = await this.findOne(id);
 
-        // Authorization: Only author or subreddit moderator/creator can delete
+        // Authorization: Only author or subjellu moderator/creator can delete
         // Add moderator check later
-        if (post.author.id !== userId && post.subreddit.creator.id !== userId) {
+        if (post.author.id !== userId && post.subjellu.creator.id !== userId) {
              throw new ForbiddenException('You do not have permission to delete this post.');
         }
 
@@ -82,7 +81,7 @@ export class PostsService {
     async findAll(limit: number = 20, offset: number = 0): Promise<Post[]> {
         const posts = await this.postsRepository.createQueryBuilder('post')
             .leftJoinAndSelect('post.author', 'author') 
-            .leftJoinAndSelect('post.subreddit', 'subreddit') 
+            .leftJoinAndSelect('post.subjellu', 'subjellu') 
             .loadRelationCountAndMap('post.commentCount', 'post.comments')
             .orderBy('post.createdAt', 'DESC')
             .skip(offset)
@@ -91,4 +90,17 @@ export class PostsService {
 
         return posts;
     }
+
+
+    async findOneWithComments(id: string): Promise<Post> {
+        const post = await this.postsRepository.findOne({
+            where: { id },
+            relations: ['author', 'subjellu', 'comments','comments.votes'], // Load relations
+        });
+        if (!post) {
+            throw new NotFoundException(`Post with ID "${id}" not found`);
+        }
+        return post;
+    }
+    
 }

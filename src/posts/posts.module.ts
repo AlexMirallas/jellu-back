@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Post } from './entities/post.entity'; // Adjust the import path as necessary
-import { SubredditsModule } from '../subreddits/subreddits.module'; // Import the SubredditsModule to validate subreddit existence
+import { Post } from './entities/post.entity'; 
+import { SubjelluModule } from '../subjellus/subjellus.module'; 
 import { VotesService } from 'src/votes/votes.service';
 import { VotesModule } from 'src/votes/votes.module';
 
@@ -11,7 +11,7 @@ import { VotesModule } from 'src/votes/votes.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post]),
-    SubredditsModule,
+    SubjelluModule,
     VotesModule 
   ],
   providers: [PostsService], 
